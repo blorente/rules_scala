@@ -74,6 +74,7 @@ def defaulted_twitter_scrooge_dependency(dependency_name, dependency_version, sh
     )
     return "@{}".format(external_name)
 
+# This call now just does some resolution, so it could potentially be skipped by someone who defines their own toolchain.
 def twitter_scrooge(
         scala_version = _default_scala_version(),
         maven_servers = _default_maven_server_urls(),
@@ -88,20 +89,20 @@ def twitter_scrooge(
 
     if not libthrift:
         libthrift = _default_libthrift_target_label(maven_servers)
-    native.bind(
-        name = "io_bazel_rules_scala/dependency/thrift/libthrift",
-        actual = libthrift,
-    )
+    # native.bind(
+    #     name = "io_bazel_rules_scala/dependency/thrift/libthrift",
+    #     actual = libthrift,
+    # )
 
     scala_version_jar_shas = _default_scala_jar_shas(major_version)
     default_scrooge_deps_version = "18.6.0"
 
     if not scrooge_core:
         scrooge_core = defaulted_twitter_scrooge_dependency("scrooge-core", default_scrooge_deps_version, scala_version_jar_shas["scrooge_core"], major_version, maven_servers)
-    native.bind(
-        name = "io_bazel_rules_scala/dependency/thrift/scrooge_core",
-        actual = scrooge_core,
-    )
+    # native.bind(
+    #     name = "io_bazel_rules_scala/dependency/thrift/scrooge_core",
+    #     actual = scrooge_core,
+    # )
 
     # Mustache is needed to generate java from thrift, and is pased further down.
     mustache_name = "io_bazel_rules_scala_mustache"
@@ -129,24 +130,26 @@ def twitter_scrooge(
     ]
     if not scrooge_generator:
         scrooge_generator = defaulted_twitter_scrooge_dependency("scrooge-generator", default_scrooge_deps_version, scala_version_jar_shas["scrooge_generator"], major_version, maven_servers, runtime_deps_for_generator)
-    native.bind(
-        name = "io_bazel_rules_scala/dependency/thrift/scrooge_generator",
-        actual = scrooge_generator,
-    )
+    # native.bind(
+    #     name = "io_bazel_rules_scala/dependency/thrift/scrooge_generator",
+    #     actual = scrooge_generator,
+    # )
 
     if not util_core:
         util_core = defaulted_twitter_scrooge_dependency("util-core", default_scrooge_deps_version, scala_version_jar_shas["util_core"], major_version, maven_servers)
-    native.bind(
-        name = "io_bazel_rules_scala/dependency/thrift/util_core",
-        actual = util_core,
-    )
+    # native.bind(
+    #     name = "io_bazel_rules_scala/dependency/thrift/util_core",
+    #     actual = util_core,
+    # )
 
     if not util_logging:
         util_logging = defaulted_twitter_scrooge_dependency("util-logging", default_scrooge_deps_version, scala_version_jar_shas["util_logging"], major_version, maven_servers)
-    native.bind(
-        name = "io_bazel_rules_scala/dependency/thrift/util_logging",
-        actual = util_logging,
-    )
+    # native.bind(
+    #     name = "io_bazel_rules_scala/dependency/thrift/util_logging",
+    #     actual = util_logging,
+    # )
+
+    native.register_toolchains("@io_bazel_rules_scala//twitter_scrooge/toolchain:twitter_scrooge_deps_toolchain")
 
 def _colon_paths(data):
     return ":".join([f.path for f in sorted(data)])
@@ -433,13 +436,7 @@ common_attrs = {
                 "//scala/private/toolchain_deps:scala_library_classpath",
             ),
             Label(
-                "//external:io_bazel_rules_scala/dependency/thrift/libthrift",
-            ),
-            Label(
-                "//external:io_bazel_rules_scala/dependency/thrift/scrooge_core",
-            ),
-            Label(
-                "//external:io_bazel_rules_scala/dependency/thrift/util_core",
+                    "//twitter_scrooge/toolchain:deps_for_twitter_scrooge",
             ),
         ],
     ),
@@ -551,10 +548,7 @@ scrooge_scala_import = rule(
                     "//scala/private/toolchain_deps:scala_library_classpath",
                 ),
                 Label(
-                    "//external:io_bazel_rules_scala/dependency/thrift/libthrift",
-                ),
-                Label(
-                    "//external:io_bazel_rules_scala/dependency/thrift/scrooge_core",
+                    "//twitter_scrooge/toolchain:deps_for_twitter_scrooge",
                 ),
             ],
         ),

@@ -5,7 +5,7 @@ scala_library(
     srcs = ["ScroogeWorker.scala"],
     visibility = ["//visibility:public"],
     deps = [
-        "//external:io_bazel_rules_scala/dependency/thrift/scrooge_generator",
+        "//twitter_scrooge/toolchain:deps_for_twitter_scrooge",    
         "//src/java/io/bazel/rulesscala/io_utils",
         "//src/java/io/bazel/rulesscala/jar",
         "//src/java/io/bazel/rulesscala/worker",

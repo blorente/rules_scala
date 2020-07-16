@@ -9,9 +9,7 @@ scala_library(
     deps = [
         ":focused_zip_importer",
         "//external:io_bazel_rules_scala/dependency/scala/parser_combinators",
-        "//external:io_bazel_rules_scala/dependency/thrift/scrooge_generator",
-        "//external:io_bazel_rules_scala/dependency/thrift/util_core",
-        "//external:io_bazel_rules_scala/dependency/thrift/util_logging",
+        "//twitter_scrooge/toolchain:deps_for_twitter_scrooge",    
     ],
 )
 
@@ -20,6 +18,6 @@ scala_library(
     srcs = ["FocusedZipImporter.scala"],
     visibility = ["//visibility:public"],
     deps = [
-        "//external:io_bazel_rules_scala/dependency/thrift/scrooge_generator",
+        "//twitter_scrooge/toolchain:deps_for_twitter_scrooge",    
     ],
 )
